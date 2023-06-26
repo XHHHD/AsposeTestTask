@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AsposeTestTask.DAL\AsposeTestTask.DAL.csproj" />
+    <ProjectReference Include="..\AsposeTestTask.DTO\AsposeTestTask.DTO.csproj" />
+  </ItemGroup>
+
+</Project>
