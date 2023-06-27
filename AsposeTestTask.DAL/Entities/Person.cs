@@ -9,8 +9,8 @@ namespace AsposeTestTask.Entities
         public double Salary { get; set; }
         public DateTime DateOfHire { get; set; }
         public CompanyRole Role { get; set; }
-        public int? BossId { get; set; }
         public int CompanyId { get; set; }
         public Company Company { get; set; }
+        public int? BossId { get; set; }
     }
 }

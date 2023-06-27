@@ -1,5 +1,6 @@
 ﻿using AsposeTestTask.BLL.Interfaces;
 using AsposeTestTask.Constants;
+using AsposeTestTask.DAL.Constants.Specifications;
 using AsposeTestTask.DAL.Data;
 using AsposeTestTask.DTO.Company;
 using AsposeTestTask.DTO.Person;
@@ -111,42 +112,11 @@ namespace AsposeTestTask.Services
                 .FirstOrDefaultAsync(p => p.PersonId == request.PersonId, cancellationToken)
                 ?? throw new Exception("Person wasn't found!");
 
-            double salary;
-            int subordinatesCount;
-            int additionalInterestMax = 0;
-            double additionalInterestCurrent = 0;
+
             var members = person.Company.Members.ToList();
             int yearsOfExperience = request.PaymentDate.Year - person.DateOfHire.Year;
-
-
-            switch (person.Role)
-            {
-                case CompanyRole.Employee:
-                    {
-                        additionalInterestMax = 30;
-                        additionalInterestCurrent = yearsOfExperience * 3;
-                        break;
-                    }
-                case CompanyRole.Manager:
-                    {
-                        additionalInterestMax = 40;
-                        subordinatesCount = GetSubordinatesFirstLevelCount(person.PersonId, members, cancellationToken);
-                        double subordinatesAdditionalInterest = subordinatesCount * 0.5;
-                        additionalInterestCurrent = yearsOfExperience * 5 + subordinatesAdditionalInterest;
-                        break;
-                    }
-                case CompanyRole.Sales:
-                    {
-                        additionalInterestMax = 35;
-                        subordinatesCount = GetSubordinatesAllLevelsCount(person.PersonId, members, cancellationToken);
-                        double subordinatesAdditionalInterest = subordinatesCount * 0.3;
-                        additionalInterestCurrent = yearsOfExperience * 1 + subordinatesAdditionalInterest;
-                        break;
-                    }
-            }
-            if (additionalInterestCurrent > additionalInterestMax) { additionalInterestCurrent = additionalInterestMax; }
-
-            salary = person.Salary + person.Salary * additionalInterestCurrent;
+            var additionalInterest = SpecificationService.GetMemberAdditionalInterest(person.PersonId, yearsOfExperience, person.Role, members);
+            double salary = person.Salary + person.Salary * additionalInterest;
 
             return salary;
         }
@@ -199,25 +169,6 @@ namespace AsposeTestTask.Services
             await _context.SaveChangesAsync(cancellationToken);
 
             return true;
-        }
-
-        public static int GetSubordinatesFirstLevelCount(int personId, List<Person> members, CancellationToken cancellationToken)
-        {
-            var subordinates = members.Where(m => m.BossId == personId);
-
-            return subordinates.Count();
-        }
-
-        public static int GetSubordinatesAllLevelsCount(int personId, List<Person> members, CancellationToken cancellationToken)
-        {
-            int subordinatesCount = members.Where(m => m.BossId == personId).Count();
-
-            foreach (var member in members)
-            {
-                subordinatesCount += GetSubordinatesAllLevelsCount(member.PersonId, members, cancellationToken);
-            }
-
-            return subordinatesCount;
         }
     }
 }

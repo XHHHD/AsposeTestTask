@@ -1,5 +1,6 @@
 ﻿using AsposeTestTask.BLL.Interfaces;
 using AsposeTestTask.Constants;
+using AsposeTestTask.DAL.Constants.Specifications;
 using AsposeTestTask.DAL.Data;
 using AsposeTestTask.DTO.Company.Requests;
 using AsposeTestTask.DTO.Company.Responses;
@@ -25,6 +26,11 @@ namespace AsposeTestTask.BLL.Services
 
         public async Task<int> CreateCompany(CreateCompanyRequestDTO request, CancellationToken cancellationToken)
         {
+            if (request.CompanyName.IsNullOrEmpty())
+            {
+                throw new Exception("You must fill in company name!");
+            }
+
             if (request.ParentCompanyId is not null)
             {
                 var parentCompany =
@@ -73,46 +79,15 @@ namespace AsposeTestTask.BLL.Services
                 await _context.Companies.FirstOrDefaultAsync(c => c.CompanyId == request.CompanyId, cancellationToken)
                 ?? throw new Exception("Company wasn't found!");
 
+
             var members = company.Members.ToList();
             double result = 0;
 
             foreach (var member in members)
             {
-                int subordinatesCount;
-                int additionalInterestMax = 0;
-                double additionalInterestCurrent = 0;
                 int yearsOfExperience = request.PaymentDate.Year - member.DateOfHire.Year;
-
-
-                switch (member.Role)
-                {
-                    case CompanyRole.Employee:
-                        {
-                            additionalInterestMax = 30;
-                            additionalInterestCurrent = yearsOfExperience * 3;
-                            break;
-                        }
-                    case CompanyRole.Manager:
-                        {
-                            additionalInterestMax = 40;
-                            subordinatesCount = PersonService.GetSubordinatesFirstLevelCount(member.PersonId, members, cancellationToken);
-                            double subordinatesAdditionalInterest = subordinatesCount * 0.5;
-                            additionalInterestCurrent = yearsOfExperience * 5 + subordinatesAdditionalInterest;
-                            break;
-                        }
-                    case CompanyRole.Sales:
-                        {
-                            additionalInterestMax = 35;
-                            subordinatesCount = PersonService.GetSubordinatesAllLevelsCount(member.PersonId, members, cancellationToken);
-                            double subordinatesAdditionalInterest = subordinatesCount * 0.3;
-                            additionalInterestCurrent = yearsOfExperience * 1 + subordinatesAdditionalInterest;
-                            break;
-                        }
-                }
-                if (additionalInterestCurrent > additionalInterestMax) { additionalInterestCurrent = additionalInterestMax; }
-
-
-                result += member.Salary + member.Salary * additionalInterestCurrent;
+                var additionalInterest = SpecificationService.GetMemberAdditionalInterest(member.PersonId, yearsOfExperience, member.Role, members);
+                result += member.Salary + member.Salary * additionalInterest;
             }
 
 
