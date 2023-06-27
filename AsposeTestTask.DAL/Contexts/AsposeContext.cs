@@ -1,5 +1,4 @@
-﻿using AsposeTestTask.Entities;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace AsposeTestTask.DAL.Data
 {

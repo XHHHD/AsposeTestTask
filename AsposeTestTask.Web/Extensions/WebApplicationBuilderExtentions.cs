@@ -18,8 +18,8 @@ namespace AsposeTestTask.Web.Extensions
                 var configProvider = serviceProvider.GetService<IConfigProvider>();
                 var connectionString = configProvider.GetDbConnectionString();
                 options.UseInternalServiceProvider(serviceProvider)
-                    .UseLazyLoadingProxies()
-                    .UseSqlServer(connectionString);
+                .UseLazyLoadingProxies()
+                .UseSqlServer(connectionString);
             });
         }
         public static void AddServices(this WebApplicationBuilder builder)

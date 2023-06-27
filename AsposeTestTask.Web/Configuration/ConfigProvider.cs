@@ -2,7 +2,7 @@
 {
     public class ConfigProvider : IConfigProvider
     {
-        string IConfigProvider.GetDbConnectionString()
+        public string GetDbConnectionString()
         {
             var builder = new ConfigurationBuilder();
             builder.SetBasePath(Directory.GetCurrentDirectory());
