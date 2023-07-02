@@ -1,0 +1,76 @@
+﻿@model AsposeTestTask.Web.Controllers.Person.Update.UpdatePersonRequest
+
+@{
+    ViewData["Title"] = "EditPerson";
+}
+
+<h1>EditPerson</h1>
+
+@using (Html.BeginForm("UpdatePerson", "Person", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>UpdatePersonRequest</h4>
+        <hr />
+        @Html.HiddenFor(model => model.PersonId)
+
+        <div class="form-group">
+            <label class="control-label col-md-2">Person Name</label>
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.PersonName, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.PersonName, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2">Salary</label>
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Salary, new { htmlAttributes = new { @class = "form-control", type = "number", step = "0.01" } })
+                @Html.ValidationMessageFor(model => model.Salary, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2">Date of Hire</label>
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.DateOfHire, new { htmlAttributes = new { @class = "form-control", type = "date" } })
+                @Html.ValidationMessageFor(model => model.DateOfHire, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2">Role</label>
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Role, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Role, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2">Boss Id</label>
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.BossId, new { htmlAttributes = new { @class = "form-control", type = "number" } })
+                @Html.ValidationMessageFor(model => model.BossId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="control-label col-md-2">Company</label>
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.CompanyId, new SelectList(Model.Companies, "CompanyId", "CompanyName"), "-- Select Company --", new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.CompanyId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to list", "PersonList", "Person", null)
+</div>

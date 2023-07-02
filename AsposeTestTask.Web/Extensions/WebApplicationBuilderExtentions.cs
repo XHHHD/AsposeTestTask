@@ -11,15 +11,15 @@ namespace AsposeTestTask.Web.Extensions
     {
         public static void AddDataBaseContext(this WebApplicationBuilder builder)
         {
-            builder.Services.AddEntityFrameworkProxies();
-
-            builder.Services.AddDbContext<AsposeContext>((serviceProvider, options) =>
+            builder.Services.AddDbContextPool<AsposeContext>((serviceProvider, options) =>
             {
                 var configProvider = serviceProvider.GetService<IConfigProvider>();
                 var connectionString = configProvider.GetDbConnectionString();
-                options.UseInternalServiceProvider(serviceProvider)
-                .UseLazyLoadingProxies()
-                .UseSqlServer(connectionString);
+
+                options
+                    //.UseInternalServiceProvider(serviceProvider)
+                    .UseSqlServer(connectionString)
+                    .UseLazyLoadingProxies();
             });
         }
         public static void AddServices(this WebApplicationBuilder builder)

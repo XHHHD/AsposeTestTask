@@ -5,7 +5,7 @@ namespace AsposeTestTask.DAL.Data
 {
     public partial class AsposeContext : DbContext
     {
-        public DbSet<Company> Companies { get; set; }
-        public DbSet<Person> Persons { get; set; }
+        public virtual DbSet<Company> Companies { get; set; }
+        public virtual DbSet<Person> Persons { get; set; }
     }
 }

@@ -10,7 +10,7 @@ namespace AsposeTestTask.Entities
         public DateTime DateOfHire { get; set; }
         public CompanyRole Role { get; set; }
         public int CompanyId { get; set; }
-        public Company Company { get; set; }
+        public virtual Company Company { get; set; }
         public int? BossId { get; set; }
     }
 }

@@ -1,0 +1,53 @@
+﻿@model List<AsposeTestTask.DTO.Company.Responses.ReadCompanyResponseDTO>
+
+@{
+    ViewData["Title"] = "CompanyList";
+}
+
+<h1>Companys List</h1>
+
+<p>
+    @Html.ActionLink("CREATE", "CreateCompany", "Company")
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                CompanyId
+            </th>
+            <th>
+                ParentCompanyId
+            </th>
+            <th>
+                CompanyName
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CompanyId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ParentCompanyId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CompanyName)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "ReadCompany", new { id = item.CompanyId, isEdit = true }) |
+                    @Html.ActionLink("Details", "ReadCompany", new { id = item.CompanyId }) |
+                    @Html.ActionLink("Payment", "CalculateCompanyPayment", new { id = item.CompanyId, paymentDate = DateTime.Today }) |
+                    @Html.ActionLink("Delete", "DeleteCompany", new { id = item.CompanyId }, new { onclick = "return confirm('Are you sure you want to delete this company?');" })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div>
+    @Html.ActionLink("Home", "Index", "Home", null)
+</div>

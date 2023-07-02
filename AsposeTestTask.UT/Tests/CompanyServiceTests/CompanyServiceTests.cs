@@ -42,7 +42,7 @@ namespace AsposeTestTask.UT.Tests.CompanyServiceTests
 
 
             //ACT
-            var companyId = await companyService.CreateCompany(request, CancellationToken.None);
+            var companyId = await companyService.CreateCompanyAsync(request, CancellationToken.None);
 
 
             //ASSERT
@@ -65,7 +65,7 @@ namespace AsposeTestTask.UT.Tests.CompanyServiceTests
 
 
             //ACT
-            var companyId = await companyService.CreateCompany(request, CancellationToken.None);
+            var companyId = await companyService.CreateCompanyAsync(request, CancellationToken.None);
 
 
             //ASSERT
@@ -86,7 +86,7 @@ namespace AsposeTestTask.UT.Tests.CompanyServiceTests
 
 
             //ACT
-            Func<Task> act = async () => await companyService.CreateCompany(request, CancellationToken.None);
+            Func<Task> act = async () => await companyService.CreateCompanyAsync(request, CancellationToken.None);
 
 
             //ASSERT
@@ -104,7 +104,7 @@ namespace AsposeTestTask.UT.Tests.CompanyServiceTests
 
 
             //ACT
-            Func<Task> act = async () => await companyService.CreateCompany(request, CancellationToken.None);
+            Func<Task> act = async () => await companyService.CreateCompanyAsync(request, CancellationToken.None);
 
 
             //ASSERT
@@ -123,7 +123,7 @@ namespace AsposeTestTask.UT.Tests.CompanyServiceTests
 
 
             //ACT
-            var result = await companyService.ReadCompany(company.CompanyId, CancellationToken.None);
+            var result = await companyService.ReadCompanyAsync(company.CompanyId, CancellationToken.None);
 
 
             //ASSERT
@@ -194,7 +194,7 @@ namespace AsposeTestTask.UT.Tests.CompanyServiceTests
 
 
             //ACT
-            var result = await companyService.QueryCompanyPayment(request, CancellationToken.None);
+            var result = await companyService.QueryCompanyPaymentAsync(request, CancellationToken.None);
 
 
             //ASSERT
@@ -214,7 +214,7 @@ namespace AsposeTestTask.UT.Tests.CompanyServiceTests
 
 
             //ACT
-            await companyService.UpdateCompany(request, CancellationToken.None);
+            await companyService.UpdateCompanyAsync(request, CancellationToken.None);
 
 
             //ASSERT

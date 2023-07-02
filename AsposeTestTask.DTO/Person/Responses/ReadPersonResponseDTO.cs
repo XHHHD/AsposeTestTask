@@ -11,5 +11,10 @@ namespace AsposeTestTask.DTO.Person.Responses
         public string Role { get; set; }
         public PersonShortModelDTO? Boss { get; set; }
         public CompanyShortModelDTO Company { get; set; }
+
+        public ReadPersonResponseDTO(double salary = 0)
+        {
+            Salary = salary;
+        }
     }
 }

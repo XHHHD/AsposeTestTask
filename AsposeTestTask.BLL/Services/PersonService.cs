@@ -103,6 +103,58 @@ namespace AsposeTestTask.Services
             return result;
         }
 
+
+        public async Task<List<ReadPersonResponseDTO>> ReadCompanyPersons(int personId, CancellationToken cancellationToken)
+        {
+            var company =
+                await _context.Companies.FirstOrDefaultAsync(c => c.CompanyId == personId, cancellationToken)
+                ?? throw new Exception("Company wasn't found!");
+
+            var result = company.Members.Select(m => new ReadPersonResponseDTO()
+            {
+                PersonId = m.PersonId,
+                PersonName = m.PersonName,
+                Salary = m.Salary,
+                DateOfHire = m.DateOfHire,
+                Role = m.Role.ToString(),
+                Boss = GetBoss(m.BossId),
+                Company = new CompanyShortModelDTO()
+                {
+                    CompanyId = m.Company.CompanyId,
+                    CompanyName = m.Company.CompanyName,
+                },
+            }).ToList();
+
+            return result;
+        }
+
+
+        public async Task<List<ReadPersonResponseDTO>> ReadAllPersons(CancellationToken cancellationToken)
+        {
+            var persons =
+                await _context.Persons
+                .Include(p => p.Company)
+                .ToListAsync(cancellationToken);
+
+            var result = persons.Select(m => new ReadPersonResponseDTO()
+            {
+                PersonId = m.PersonId,
+                PersonName = m.PersonName,
+                Salary = m.Salary,
+                DateOfHire = m.DateOfHire,
+                Role = m.Role.ToString(),
+                Boss = GetBoss(m.BossId),
+                Company = new CompanyShortModelDTO()
+                {
+                    CompanyId = m.Company.CompanyId,
+                    CompanyName = m.Company.CompanyName,
+                },
+            }).ToList();
+
+            return result;
+        }
+
+
         public async Task<double> QueryPersonPayment(QueryPersonPaymentRequestDTO request, CancellationToken cancellationToken)
         {
             var person =
@@ -159,16 +211,41 @@ namespace AsposeTestTask.Services
             return true;
         }
 
-        public async Task<bool> DeletePerson(int personId, CancellationToken cancellationToken)
+        public bool DeletePerson(int personId)
         {
-            var person =
-                await _context.Persons.FirstOrDefaultAsync(p => p.PersonId == personId, cancellationToken)
+            var person = _context.Persons.FirstOrDefault(p => p.PersonId == personId)
                 ?? throw new Exception("Person wasn't found!");
 
             _context.Persons.Remove(person);
-            await _context.SaveChangesAsync(cancellationToken);
+            _context.SaveChanges();
 
             return true;
+        }
+
+
+        public PersonShortModelDTO? GetBoss(int? bossId)
+        {
+            if (bossId is null)
+            {
+                return null;
+            }
+            else
+            {
+                var boss = _context.Persons.FirstOrDefault(p => p.PersonId == bossId);
+
+                if (boss == null)
+                {
+                    return null;
+                }
+
+                var result = new PersonShortModelDTO()
+                {
+                    PersonId = boss.PersonId,
+                    PersonName = boss.PersonName,
+                };
+
+                return result;
+            }
         }
     }
 }

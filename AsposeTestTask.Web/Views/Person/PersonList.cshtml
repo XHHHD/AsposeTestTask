@@ -1,0 +1,59 @@
+﻿@model List<AsposeTestTask.DTO.Person.Responses.ReadPersonResponseDTO>
+
+@{
+    ViewData["Title"] = "PersonsList";
+}
+
+<h1>Persons List</h1>
+
+<p>
+    @Html.ActionLink("CREATE", "CreatePerson", "Person")
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                PersonId
+            </th>
+            <th>
+                PersonName
+            </th>
+            <th>
+                Role
+            </th>
+            <th>
+                Company
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PersonId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PersonName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Role)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Company.CompanyName)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "EditPerson", new { personId = item.PersonId }) |
+                    @Html.ActionLink("Details", "ReadPerson", new { id = item.PersonId }) |
+                    @Html.ActionLink("Payment", "CalculatePersonPayment", new { id = item.PersonId, paymentDate = DateTime.Today }) |
+                    @Html.ActionLink("Delete", "DeletePerson", new { id = item.PersonId }, new { onclick = "return confirm('Are you sure you want to delete this person?');" })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div>
+    @Html.ActionLink("Home", "Index", "Home", null)
+</div>

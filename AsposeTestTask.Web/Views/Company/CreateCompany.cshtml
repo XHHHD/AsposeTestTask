@@ -1,0 +1,31 @@
+﻿@model AsposeTestTask.Web.Controllers.Company.Create.CreateCompanyRequest
+
+@{
+    ViewData["Title"] = "CreateCompany";
+}
+
+<h1>Create New Company</h1>
+
+<h4>Createating form</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form method="post" action="/Company/CreateCompany">
+            <label for="companyName">Company Name:</label>
+            <input type="text" id="companyName" name="companyName" />
+            <button type="submit">Create Company</button>
+        </form>
+        @if (ViewBag.CompanyId != null)
+        {
+            <div>Result: Success! Your company Id is: @ViewBag.CompanyId</div>
+        }
+    </div>
+</div>
+
+<div>
+    @Html.ActionLink("Back to list", "CompanyList", "Company", null);
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

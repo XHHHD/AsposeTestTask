@@ -7,7 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 
 builder.Services.AddMvc();
-builder.Services.AddScoped<IConfigProvider, ConfigProvider>();
+builder.Services.AddSingleton<IConfigProvider, ConfigProvider>();
 builder.AddDataBaseContext();
 builder.AddServices();
 
@@ -34,11 +34,6 @@ app.UseEndpoints(endpoints =>
 });
 
 app.UseAuthorization();
-
-//app.Map(
-//    "{controller=Home}/{action=Index}/{id?}",
-//    (string controller, string action, string? id) =>
-//        $"Controller: {controller} \nAction: {action} \nId: {id}");
 
 app.MapRazorPages();
 

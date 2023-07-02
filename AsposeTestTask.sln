@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsposeTestTask.Web", "Aspos
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsposeTestTask.BLL", "AsposeTestTask.BLL\AsposeTestTask.BLL.csproj", "{713CF59B-8D6A-4C20-B7EA-9DF362D7A9D2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AsposeTestTask.UT", "AsposeTestTask.UT\AsposeTestTask.UT.csproj", "{9E095373-913F-4CFF-807B-A3FC5E1D5B59}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AsposeTestTask.UT", "AsposeTestTask.UT\AsposeTestTask.UT.csproj", "{9E095373-913F-4CFF-807B-A3FC5E1D5B59}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

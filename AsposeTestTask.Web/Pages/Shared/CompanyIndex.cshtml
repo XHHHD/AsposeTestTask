@@ -1,0 +1,21 @@
+﻿@{
+    ViewData["Title"] = "CompanyIndex";
+}
+
+<h2>Company</h2>
+
+<form method="post" action="/Company/CreateCompany">
+    <label for="companyName">Company Name:</label>
+    <input type="text" id="companyName" name="companyName" />
+    <button type="submit">Create Company</button>
+</form>
+
+@if (ViewBag.Result != null)
+{
+    <div>Result: @ViewBag.Result</div>
+}
+
+@if (ViewBag.Error != null)
+{
+    <div>Error: @ViewBag.Error</div>
+}

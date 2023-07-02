@@ -1,15 +1,12 @@
 ﻿using AsposeTestTask.BLL.Interfaces;
-using AsposeTestTask.Constants;
 using AsposeTestTask.DAL.Constants.Specifications;
 using AsposeTestTask.DAL.Data;
 using AsposeTestTask.DTO.Company.Requests;
 using AsposeTestTask.DTO.Company.Responses;
 using AsposeTestTask.DTO.Person;
 using AsposeTestTask.Entities;
-using AsposeTestTask.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using System;
 
 namespace AsposeTestTask.BLL.Services
 {
@@ -24,7 +21,7 @@ namespace AsposeTestTask.BLL.Services
         }
 
 
-        public async Task<int> CreateCompany(CreateCompanyRequestDTO request, CancellationToken cancellationToken)
+        public async Task<int> CreateCompanyAsync(CreateCompanyRequestDTO request, CancellationToken cancellationToken)
         {
             if (request.CompanyName.IsNullOrEmpty())
             {
@@ -50,7 +47,7 @@ namespace AsposeTestTask.BLL.Services
             return company.CompanyId;
         }
 
-        public async Task<ReadCompanyResponseDTO> ReadCompany(int companyId, CancellationToken cancellationToken)
+        public async Task<ReadCompanyResponseDTO> ReadCompanyAsync(int companyId, CancellationToken cancellationToken)
         {
             var company =
                 await _context.Companies.FirstOrDefaultAsync(c => c.CompanyId == companyId, cancellationToken)
@@ -73,7 +70,34 @@ namespace AsposeTestTask.BLL.Services
             return result;
         }
 
-        public async Task<double> QueryCompanyPayment(QueryCompanyPaymentRequestDTO request, CancellationToken cancellationToken)
+        public async Task<List<ReadCompanyResponseDTO>> ReadCompaniesAsync(CancellationToken cancellationToken)
+        {
+            var companies =
+                await _context.Companies.ToListAsync(cancellationToken)
+                ?? throw new Exception("Company wasn't found!");
+            var result = new List<ReadCompanyResponseDTO>();
+
+
+            foreach (var company in companies)
+            {
+                result.Add(new ReadCompanyResponseDTO()
+                {
+                    CompanyId = company.CompanyId,
+                    CompanyName = company.CompanyName,
+                    ParentCompanyId = company.ParentCompanyId,
+                    Members = company.Members.Select(p => new PersonShortModelDTO()
+                    {
+                        PersonId = p.PersonId,
+                        PersonName = p.PersonName,
+                    }).ToList(),
+                });
+            }
+
+
+            return result;
+        }
+
+        public async Task<double> QueryCompanyPaymentAsync(QueryCompanyPaymentRequestDTO request, CancellationToken cancellationToken)
         {
             var company =
                 await _context.Companies.FirstOrDefaultAsync(c => c.CompanyId == request.CompanyId, cancellationToken)
@@ -94,7 +118,7 @@ namespace AsposeTestTask.BLL.Services
             return result;
         }
 
-        public async Task<bool> UpdateCompany(UpdateCompanyRequestDTO request, CancellationToken cancellationToken)
+        public async Task<bool> UpdateCompanyAsync(UpdateCompanyRequestDTO request, CancellationToken cancellationToken)
         {
             var company =
                 await _context.Companies.FirstOrDefaultAsync(c => c.CompanyId == request.CompanyId, cancellationToken)
@@ -117,14 +141,13 @@ namespace AsposeTestTask.BLL.Services
             return true;
         }
 
-        public async Task<bool> DeleteCompany(int companyId, CancellationToken cancellationToken)
+        public bool DeleteCompany(int companyId)
         {
-            var company =
-                await _context.Companies.FirstOrDefaultAsync(c => c.CompanyId == companyId, cancellationToken)
+            var company = _context.Companies.FirstOrDefault(c => c.CompanyId == companyId)
                 ?? throw new Exception("Company wasn't found!");
 
             _context.Companies.Remove(company);
-            await _context.SaveChangesAsync(cancellationToken);
+            _context.SaveChanges();
 
             return true;
         }

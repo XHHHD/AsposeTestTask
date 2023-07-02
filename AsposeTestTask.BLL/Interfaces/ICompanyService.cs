@@ -5,10 +5,11 @@ namespace AsposeTestTask.BLL.Interfaces
 {
     public interface ICompanyService
     {
-        Task<int> CreateCompany(CreateCompanyRequestDTO request, CancellationToken cancellationToken);
-        Task<ReadCompanyResponseDTO> ReadCompany(int companyId, CancellationToken cancellationToken);
-        Task<double> QueryCompanyPayment(QueryCompanyPaymentRequestDTO request, CancellationToken cancellationToken);
-        Task<bool> UpdateCompany(UpdateCompanyRequestDTO request, CancellationToken cancellationToken);
-        Task<bool> DeleteCompany(int companyId, CancellationToken cancellationToken);
+        Task<int> CreateCompanyAsync(CreateCompanyRequestDTO request, CancellationToken cancellationToken);
+        Task<ReadCompanyResponseDTO> ReadCompanyAsync(int companyId, CancellationToken cancellationToken);
+        Task<List<ReadCompanyResponseDTO>> ReadCompaniesAsync(CancellationToken cancellationToken);
+        Task<double> QueryCompanyPaymentAsync(QueryCompanyPaymentRequestDTO request, CancellationToken cancellationToken);
+        Task<bool> UpdateCompanyAsync(UpdateCompanyRequestDTO request, CancellationToken cancellationToken);
+        bool DeleteCompany(int companyId);
     }
 }

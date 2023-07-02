@@ -7,8 +7,10 @@ namespace AsposeTestTask.BLL.Interfaces
     {
         Task<int> CreatePerson(CreatePersonRequestDTO request, CancellationToken cancellationToken);
         Task<ReadPersonResponseDTO> ReadPerson(int personId, CancellationToken cancellationToken);
+        Task<List<ReadPersonResponseDTO>> ReadCompanyPersons(int companyId, CancellationToken cancellationToken);
+        Task<List<ReadPersonResponseDTO>> ReadAllPersons(CancellationToken cancellationToken);
         Task<double> QueryPersonPayment(QueryPersonPaymentRequestDTO request, CancellationToken cancellationToken);
         Task<bool> UpdatePerson(UpdatePersonRequestDTO request, CancellationToken cancellationToken);
-        Task<bool> DeletePerson(int personId, CancellationToken cancellationToken);
+        bool DeletePerson(int personId);
     }
 }

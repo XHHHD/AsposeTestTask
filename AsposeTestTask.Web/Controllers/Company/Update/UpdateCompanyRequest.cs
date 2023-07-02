@@ -4,15 +4,16 @@ namespace AsposeTestTask.Web.Controllers.Company.Update
 {
     public class UpdateCompanyRequest
     {
-        public int? ParentId { get; set; }
-        public string? Name { get; set; }
+        public int CompanyId { get; set; }
+        public int? ParentCompanyId { get; set; }
+        public string? CompanyName { get; set; }
 
 
-        public UpdateCompanyRequestDTO GetDTO(int id) => new()
+        public UpdateCompanyRequestDTO GetDTO() => new()
         {
-            CompanyId = id,
-            ParentCompanyId = ParentId,
-            CompanyName = Name,
+            CompanyId = CompanyId,
+            ParentCompanyId = ParentCompanyId,
+            CompanyName = CompanyName,
         };
     }
 }

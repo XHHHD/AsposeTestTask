@@ -5,17 +5,17 @@ namespace AsposeTestTask.Web.Controllers.Company.Read
 {
     public class ReadCompanyResponse
     {
-        public int Id { get; set; }
+        public int CompanyId { get; set; }
         public int? ParentCompanyId { get; set; }
-        public string Name { get; set; }
+        public string CompanyName { get; set; }
         public List<PersonShortModelDTO> Members { get; set; }
 
 
         public ReadCompanyResponse(ReadCompanyResponseDTO dTO)
         {
-            Id = dTO.CompanyId;
+            CompanyId = dTO.CompanyId;
             ParentCompanyId = dTO.ParentCompanyId;
-            Name = dTO.CompanyName;
+            CompanyName = dTO.CompanyName;
             Members = dTO.Members;
         }
     }
