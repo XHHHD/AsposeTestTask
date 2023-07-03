@@ -236,7 +236,7 @@ namespace AsposeTestTask.UT.Tests.CompanyServiceTests
 
 
             //ACT
-            await companyService.DeleteCompany(companyId, CancellationToken.None);
+            companyService.DeleteCompany(companyId);
 
 
             //ASSERT
