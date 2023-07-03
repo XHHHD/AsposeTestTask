@@ -17,14 +17,14 @@
 </p>
 
 <div>
-    @Html.ActionLink("Back to Person List", "PersonList")
-</div>
-
-<div>
     <form method="get" action="@Url.Action("CalculatePersonPayment", "Person")">
         <input type="hidden" name="id" value="@Model.PersonId" />
         <label for="paymentDate">Payment Date:</label>
         <input type="date" name="paymentDate" id="paymentDate" value="@ViewBag.PaymentDate.ToString("yyyy-MM-dd")">
         <input type="submit" value="Calculate">
     </form>
+</div>
+
+<div>
+    @Html.ActionLink("Back to Person List", "PersonList")
 </div>

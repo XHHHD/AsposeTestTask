@@ -6,6 +6,9 @@ namespace AsposeTestTask.Entities
     {
         public int PersonId { get; set; }
         public string PersonName { get; set; }
+        /// <summary>
+        /// This is main person salary without any bonuses.
+        /// </summary>
         public double Salary { get; set; }
         public DateTime DateOfHire { get; set; }
         public CompanyRole Role { get; set; }

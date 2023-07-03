@@ -19,6 +19,11 @@ namespace AsposeTestTask.Web.Controllers.Person
             _companyService = companyService;
         }
 
+
+        /// <summary>
+        /// Creating person page.
+        /// </summary>
+        /// <returns>Person creation page with companies to follow.</returns>
         public async Task<IActionResult> CreatePerson()
         {
             var companies = await _companyService.ReadCompaniesAsync(CancellationToken.None);
@@ -30,6 +35,11 @@ namespace AsposeTestTask.Web.Controllers.Person
         }
 
 
+        /// <summary>
+        /// Creating person request.
+        /// </summary>
+        /// <param name="request">Person creation request.</param>
+        /// <returns>Person creation page with companies to follow.</returns>
         [HttpPost]
         public async Task<IActionResult> CreatePerson(CreatePersonRequest request)
         {
@@ -44,6 +54,11 @@ namespace AsposeTestTask.Web.Controllers.Person
         }
 
 
+        /// <summary>
+        /// Person info page.
+        /// </summary>
+        /// <param name="id">Person Id.</param>
+        /// <returns>Person info page.</returns>
         public async Task<IActionResult> ReadPerson(int id)
         {
             var result = await _personService.ReadPerson(id, CancellationToken.None);
@@ -52,6 +67,11 @@ namespace AsposeTestTask.Web.Controllers.Person
         }
 
 
+        /// <summary>
+        /// Persons of current company request.
+        /// </summary>
+        /// <param name="companyId">Company Id.</param>
+        /// <returns>View with all employees of current company.</returns>
         public async Task<IActionResult> ReadCompanyPerson(int companyId)
         {
             var result = await _personService.ReadCompanyPersons(companyId, CancellationToken.None);
@@ -59,6 +79,10 @@ namespace AsposeTestTask.Web.Controllers.Person
         }
 
 
+        /// <summary>
+        /// All registered persons view.
+        /// </summary>
+        /// <returns>View with all registered persons.</returns>
         public async Task<IActionResult> PersonList()
         {
             var result = await _personService.ReadAllPersons(CancellationToken.None);
@@ -66,6 +90,12 @@ namespace AsposeTestTask.Web.Controllers.Person
         }
 
 
+        /// <summary>
+        /// Calculate person payment page.
+        /// </summary>
+        /// <param name="id">Person Id.</param>
+        /// <param name="paymentDate">Salary calculation day.</param>
+        /// <returns>Calculate person payment page with calculated person salary.</returns>
         public async Task<IActionResult> CalculatePersonPayment(int id, DateTime paymentDate)
         {
             var request = new QueryPersonPaymentRequest
@@ -89,12 +119,23 @@ namespace AsposeTestTask.Web.Controllers.Person
         }
 
 
+        /// <summary>
+        /// Person delates overview.
+        /// </summary>
+        /// <param name="personId">Person Id.</param>
+        /// <returns>Person delates view.</returns>
         public async Task<IActionResult> DetailsPerson(int personId)
         {
             var result = await _personService.ReadPerson(personId, CancellationToken.None);
             return View(result);
         }
 
+
+        /// <summary>
+        /// Person editing delates overview.
+        /// </summary>
+        /// <param name="personId">Person Id.</param>
+        /// <returns>Person editing delates view.</returns>
         public async Task<IActionResult> EditPerson(int personId)
         {
             var result = await _personService.ReadPerson(personId, CancellationToken.None);
@@ -113,6 +154,12 @@ namespace AsposeTestTask.Web.Controllers.Person
             return View(model);
         }
 
+
+        /// <summary>
+        /// Editing person data request.
+        /// </summary>
+        /// <param name="request">Updating form.</param>
+        /// <returns>Person editing delates view.</returns>
         [HttpPost]
         public async Task<IActionResult> UpdatePerson(UpdatePersonRequest request)
         {
@@ -130,6 +177,11 @@ namespace AsposeTestTask.Web.Controllers.Person
         }
 
 
+        /// <summary>
+        /// Deleting person request.
+        /// </summary>
+        /// <param name="Id">Person Id.</param>
+        /// <returns>View with all registered persons.</returns>
         public IActionResult DeletePerson(int Id)
         {
             try

@@ -6,11 +6,20 @@ namespace AsposeTestTask.DAL.Constants.Specifications
 {
     public static class SpecificationService
     {
-        public static double GetMemberAdditionalInterest(int personId, int yearsOfExperience, CompanyRole role, List<Person> members)
+        /// <summary>
+        /// Calculating bonuses for current person.
+        /// </summary>
+        /// <param name="personId">Current person Id.</param>
+        /// <param name="yearsOfExperience">Work experience in current company.</param>
+        /// <param name="members">All members in current company.</param>
+        /// <returns>Person salary value.</returns>
+        public static double GetMemberAdditionalInterest(int personId, int yearsOfExperience, List<Person> members)
         {
             var vM = new SpecificationVM();
+            var person = members.FirstOrDefault(m => m.PersonId == personId)
+                ?? throw new Exception("Person wasn't found in collection!");
 
-            switch (role)
+            switch (person.Role)
             {
                 case CompanyRole.Employee:
                     {
@@ -43,6 +52,13 @@ namespace AsposeTestTask.DAL.Constants.Specifications
             return vM.AdditionalInterestCurrent;
         }
 
+
+        /// <summary>
+        /// Get subordinates first level of current boss-person.
+        /// </summary>
+        /// <param name="personId">Current Boss Id.</param>
+        /// <param name="members">All employees of company.</param>
+        /// <returns>Subordinates first level count.</returns>
         public static int GetSubordinatesFirstLevelCount(int personId, List<Person> members)
         {
             var subordinates = members.Where(m => m.BossId == personId);
@@ -50,6 +66,13 @@ namespace AsposeTestTask.DAL.Constants.Specifications
             return subordinates.Count();
         }
 
+
+        /// <summary>
+        /// Get subordinates of current boss-person.
+        /// </summary>
+        /// <param name="personId">Current Boss Id.</param>
+        /// <param name="members">All employees of company.</param>
+        /// <returns>Subordinates count.</returns>
         public static int GetSubordinatesAllLevelsCount(int personId, List<Person> members)
         {
             var subordinates = members.Where(m => m.BossId == personId);

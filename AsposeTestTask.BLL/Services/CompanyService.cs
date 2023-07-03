@@ -21,8 +21,13 @@ namespace AsposeTestTask.BLL.Services
         }
 
 
+        /// <summary>
+        /// Creating company method.
+        /// </summary>
+        /// <returns>Created company Id.</returns>
         public async Task<int> CreateCompanyAsync(CreateCompanyRequestDTO request, CancellationToken cancellationToken)
         {
+            #region CHECKS
             if (request.CompanyName.IsNullOrEmpty())
             {
                 throw new Exception("You must fill in company name!");
@@ -34,6 +39,7 @@ namespace AsposeTestTask.BLL.Services
                     await _context.Companies.FirstOrDefaultAsync(c => c.CompanyId == request.ParentCompanyId, cancellationToken)
                     ?? throw new Exception("Parent company wasn't found!");
             }
+            #endregion
 
             var company = new Company()
             {
@@ -47,11 +53,18 @@ namespace AsposeTestTask.BLL.Services
             return company.CompanyId;
         }
 
+
+        /// <summary>
+        /// Reading current company info.
+        /// </summary>
+        /// <returns>Current company data.</returns>
         public async Task<ReadCompanyResponseDTO> ReadCompanyAsync(int companyId, CancellationToken cancellationToken)
         {
+            #region DB REQUESTS
             var company =
                 await _context.Companies.FirstOrDefaultAsync(c => c.CompanyId == companyId, cancellationToken)
                 ?? throw new Exception("Company wasn't found!");
+            #endregion
 
 
             var result = new ReadCompanyResponseDTO()
@@ -70,14 +83,22 @@ namespace AsposeTestTask.BLL.Services
             return result;
         }
 
+
+
+        /// <summary>
+        /// Get info about all registered companies.
+        /// </summary>
+        /// <returns>List of registered companies data.</returns>
         public async Task<List<ReadCompanyResponseDTO>> ReadCompaniesAsync(CancellationToken cancellationToken)
         {
+            #region DB REQUESTS
             var companies =
                 await _context.Companies.ToListAsync(cancellationToken)
                 ?? throw new Exception("Company wasn't found!");
+            #endregion
+
+
             var result = new List<ReadCompanyResponseDTO>();
-
-
             foreach (var company in companies)
             {
                 result.Add(new ReadCompanyResponseDTO()
@@ -97,40 +118,52 @@ namespace AsposeTestTask.BLL.Services
             return result;
         }
 
+
+        /// <summary>
+        /// Calculation salary of all employees assigned to current company.
+        /// </summary>
+        /// <returns>Calculated salaries value of current company.</returns>
         public async Task<double> QueryCompanyPaymentAsync(QueryCompanyPaymentRequestDTO request, CancellationToken cancellationToken)
         {
+            #region DB REQUESTS
             var company =
                 await _context.Companies.FirstOrDefaultAsync(c => c.CompanyId == request.CompanyId, cancellationToken)
                 ?? throw new Exception("Company wasn't found!");
+            #endregion
 
-
-            var members = company.Members.ToList();
             double result = 0;
-
+            var members = company.Members.ToList();
             foreach (var member in members)
             {
                 int yearsOfExperience = request.PaymentDate.Year - member.DateOfHire.Year;
-                var additionalInterest = SpecificationService.GetMemberAdditionalInterest(member.PersonId, yearsOfExperience, member.Role, members);
+                var additionalInterest = SpecificationService.GetMemberAdditionalInterest(member.PersonId, yearsOfExperience, members);
                 result += member.Salary + member.Salary * additionalInterest;
             }
-
 
             return result;
         }
 
+
+        /// <summary>
+        /// Editing current company data.
+        /// </summary>
+        /// <returns>TRUE if editing was successful.</returns>
         public async Task<bool> UpdateCompanyAsync(UpdateCompanyRequestDTO request, CancellationToken cancellationToken)
         {
+            #region DB REQUESTS
             var company =
                 await _context.Companies.FirstOrDefaultAsync(c => c.CompanyId == request.CompanyId, cancellationToken)
                 ?? throw new Exception("Company wasn't found!");
+            #endregion
 
+            #region REASSIGNING TO OTHER PARENT COMPANY
             if (request.ParentCompanyId is not null)
             {
                 var parentCompany =
                     await _context.Companies.FirstOrDefaultAsync(c => c.CompanyId == request.ParentCompanyId, cancellationToken)
                     ?? throw new Exception("Parent company wasn't found!");
             }
-
+            #endregion
 
             company.CompanyName = request.CompanyName.IsNullOrEmpty() ? company.CompanyName : request.CompanyName;
             company.ParentCompanyId = request.ParentCompanyId;
@@ -141,10 +174,17 @@ namespace AsposeTestTask.BLL.Services
             return true;
         }
 
+
+        /// <summary>
+        /// Deleting current company.
+        /// </summary>
+        /// <returns>TRUE if deleting was successful.</returns>
         public bool DeleteCompany(int companyId)
         {
+            #region DB REQUESTS
             var company = _context.Companies.FirstOrDefault(c => c.CompanyId == companyId)
                 ?? throw new Exception("Company wasn't found!");
+            #endregion
 
             _context.Companies.Remove(company);
             _context.SaveChanges();

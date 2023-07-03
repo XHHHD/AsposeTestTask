@@ -17,6 +17,10 @@ namespace AsposeTestTask.Web.Controllers.Company
         }
 
 
+        /// <summary>
+        /// Creating new company page.
+        /// </summary>
+        /// <returns>View creating company page and created company Id. </returns>
         public async Task<IActionResult> CreateCompany(string companyName)
         {
             try
@@ -34,6 +38,12 @@ namespace AsposeTestTask.Web.Controllers.Company
         }
 
 
+        /// <summary>
+        /// Agile page for viewing and editing company data.
+        /// </summary>
+        /// <param name="id">Company Id.</param>
+        /// <param name="isEdit">Is this page only for viewing or for editing.</param>
+        /// <returns>Overview of company info, or editing company info page.</returns>
         public async Task<IActionResult> ReadCompany(int id, bool isEdit = false)
         {
             var result = await _companyService.ReadCompanyAsync(id, CancellationToken.None);
@@ -53,6 +63,10 @@ namespace AsposeTestTask.Web.Controllers.Company
         }
 
 
+        /// <summary>
+        /// All companies overview.
+        /// </summary>
+        /// <returns>Companies overview page.</returns>
         public async Task<IActionResult> CompanyList()
         {
             var result = await _companyService.ReadCompaniesAsync(CancellationToken.None);
@@ -60,6 +74,12 @@ namespace AsposeTestTask.Web.Controllers.Company
         }
 
 
+        /// <summary>
+        /// Calculating company payments.
+        /// </summary>
+        /// <param name="id">Company Id.</param>
+        /// <param name="paymentDate">Salary calculation day.</param>
+        /// <returns>Calculating company payments page.</returns>
         public async Task<IActionResult> CalculateCompanyPayment(int id, DateTime paymentDate)
         {
             var request = new QueryCompanyPaymentRequest
@@ -83,6 +103,11 @@ namespace AsposeTestTask.Web.Controllers.Company
         }
 
 
+        /// <summary>
+        /// Editing company request.
+        /// </summary>
+        /// <param name="request">Editing request form.</param>
+        /// <returns>Overviewing company page.</returns>
         [HttpPost]
         public async Task<IActionResult> UpdateCompany(UpdateCompanyRequest request)
         {
@@ -92,6 +117,11 @@ namespace AsposeTestTask.Web.Controllers.Company
         }
 
 
+        /// <summary>
+        /// Deleting company request.
+        /// </summary>
+        /// <param name="id">Deleting company Id.</param>
+        /// <returns>Result massage.</returns>
         public IActionResult DeleteCompany(int id)
         {
             try

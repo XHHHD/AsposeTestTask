@@ -23,13 +23,19 @@ namespace AsposeTestTask.Services
         }
 
 
+        /// <summary>
+        /// Creating person method.
+        /// </summary>
+        /// <returns>Created person Id.</returns>
         public async Task<int> CreatePerson(CreatePersonRequestDTO request, CancellationToken cancellationToken)
         {
+            #region DB REQUESTS
             var company =
                 await _context.Companies.FirstOrDefaultAsync(c => c.CompanyId == request.CompanyId, cancellationToken)
                 ?? throw new Exception("Company wasn't found!");
+            #endregion
 
-
+            #region CHECKING BOSS
             if (request.BossId is not null)
             {
                 var boss =
@@ -37,9 +43,11 @@ namespace AsposeTestTask.Services
                         .FirstOrDefaultAsync(p => p.PersonId == request.BossId, cancellationToken)
                         ?? throw new Exception("Boss wasn't found!");
 
+                //Check if supposed Boss have permissions get employees.
                 if (boss.Role == CompanyRole.Employee)
                 { throw new Exception("Employee can't be boss!"); }
             }
+            #endregion
 
             var person = new Person()
             {
@@ -58,31 +66,20 @@ namespace AsposeTestTask.Services
             return person.PersonId;
         }
 
+
+        /// <summary>
+        /// Reading person data method.
+        /// </summary>
+        /// <returns>Person data.</returns>
         public async Task<ReadPersonResponseDTO> ReadPerson(int personId, CancellationToken cancellationToken)
         {
+            #region DB REQUESTS
             var person =
                 await _context.Persons
                 .Include(p => p.Company)
                 .FirstOrDefaultAsync(p => p.PersonId == personId, cancellationToken)
                 ?? throw new Exception("Person wasn't found!");
-
-
-            PersonShortModelDTO? boss = null;
-            if (person.BossId is not null)
-            {
-                var personBoss =
-                    await _context.Persons.FirstOrDefaultAsync(p => p.PersonId == person.BossId, cancellationToken)
-                    ?? throw new Exception("Boss wasn't found!");
-
-                if (personBoss.Role == CompanyRole.Employee)
-                { throw new Exception("Employee can't be boss!"); }
-
-                boss = new()
-                {
-                    PersonId = personBoss.PersonId,
-                    PersonName = personBoss.PersonName,
-                };
-            }
+            #endregion
 
             var result = new ReadPersonResponseDTO()
             {
@@ -91,7 +88,7 @@ namespace AsposeTestTask.Services
                 Salary = person.Salary,
                 DateOfHire = person.DateOfHire,
                 Role = person.Role.ToString(),
-                Boss = boss,
+                Boss = GetBoss(person.BossId),
                 Company = new CompanyShortModelDTO()
                 {
                     CompanyId = person.Company.CompanyId,
@@ -103,12 +100,17 @@ namespace AsposeTestTask.Services
             return result;
         }
 
-
+        /// <summary>
+        /// Read data of all employees of current company.
+        /// </summary>
+        /// <returns>Data of employees of current company.</returns>
         public async Task<List<ReadPersonResponseDTO>> ReadCompanyPersons(int personId, CancellationToken cancellationToken)
         {
+            #region DB REQUESTS
             var company =
                 await _context.Companies.FirstOrDefaultAsync(c => c.CompanyId == personId, cancellationToken)
                 ?? throw new Exception("Company wasn't found!");
+            #endregion
 
             var result = company.Members.Select(m => new ReadPersonResponseDTO()
             {
@@ -131,10 +133,12 @@ namespace AsposeTestTask.Services
 
         public async Task<List<ReadPersonResponseDTO>> ReadAllPersons(CancellationToken cancellationToken)
         {
+            #region DB REQUESTS
             var persons =
                 await _context.Persons
                 .Include(p => p.Company)
                 .ToListAsync(cancellationToken);
+            #endregion
 
             var result = persons.Select(m => new ReadPersonResponseDTO()
             {
@@ -155,42 +159,62 @@ namespace AsposeTestTask.Services
         }
 
 
+        /// <summary>
+        /// Person salary calculation.
+        /// </summary>
+        /// <param name="request">Calculation request form.</param>
+        /// <returns>Calculated salary value.</returns>
         public async Task<double> QueryPersonPayment(QueryPersonPaymentRequestDTO request, CancellationToken cancellationToken)
         {
+            #region DB REQUESTS
             var person =
                 await _context.Persons
                 .Include(p => p.Company)
                 .ThenInclude(c => c.Members)
                 .FirstOrDefaultAsync(p => p.PersonId == request.PersonId, cancellationToken)
                 ?? throw new Exception("Person wasn't found!");
+            #endregion
 
 
             var members = person.Company.Members.ToList();
             int yearsOfExperience = request.PaymentDate.Year - person.DateOfHire.Year;
-            var additionalInterest = SpecificationService.GetMemberAdditionalInterest(person.PersonId, yearsOfExperience, person.Role, members);
+            var additionalInterest = SpecificationService.GetMemberAdditionalInterest(person.PersonId, yearsOfExperience, members);
             double salary = person.Salary + person.Salary * additionalInterest;
 
             return salary;
         }
 
+
+        /// <summary>
+        /// Update person data.
+        /// </summary>
+        /// <returns>TRUE if update was successful.</returns>
         public async Task<bool> UpdatePerson(UpdatePersonRequestDTO request, CancellationToken cancellationToken)
         {
+            #region DB REQUESTS
             var person =
                 await _context.Persons
                 .Include(p => p.Company)
                 .FirstOrDefaultAsync(p => p.PersonId == request.PersonId, cancellationToken)
                 ?? throw new Exception("Person wasn't found!");
+            #endregion
 
-
+            #region CHECKING BOSS
             if (request.BossId is not null)
             {
                 var boss =
                     await _context.Persons.FirstOrDefaultAsync(p => p.PersonId == request.BossId, cancellationToken)
-                    ?? throw new Exception("Boss wasn't found!");
+                        ?? throw new Exception("Boss wasn't found!");
+
+                //Check if supposed Boss have permissions get employees.
+                if (boss.Role == CompanyRole.Employee)
+                { throw new Exception("Employee can't be boss!"); }
 
                 person.BossId = boss.PersonId;
             }
+            #endregion
 
+            #region REASSIGNING TO OTHER COMPANY
             if (request.CompanyId is not null)
             {
                 var company =
@@ -199,6 +223,7 @@ namespace AsposeTestTask.Services
 
                 company.Members.Add(person);
             }
+            #endregion
 
             person.Salary = request.Salary is null ? person.Salary : (double)request.Salary;
             person.PersonName = request.PersonName.IsNullOrEmpty() ? person.PersonName : request.PersonName;
@@ -211,10 +236,17 @@ namespace AsposeTestTask.Services
             return true;
         }
 
+
+        /// <summary>
+        /// Deleting current person.
+        /// </summary>
+        /// <returns>TRUE if deleting was successful.</returns>
         public bool DeletePerson(int personId)
         {
+            #region DB REQUESTS
             var person = _context.Persons.FirstOrDefault(p => p.PersonId == personId)
                 ?? throw new Exception("Person wasn't found!");
+            #endregion
 
             _context.Persons.Remove(person);
             _context.SaveChanges();
@@ -223,6 +255,10 @@ namespace AsposeTestTask.Services
         }
 
 
+        /// <summary>
+        /// Searching Boss in DB.
+        /// </summary>
+        /// <returns>Boss person.</returns>
         public PersonShortModelDTO? GetBoss(int? bossId)
         {
             if (bossId is null)

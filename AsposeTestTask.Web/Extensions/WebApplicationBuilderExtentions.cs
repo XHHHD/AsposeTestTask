@@ -11,13 +11,15 @@ namespace AsposeTestTask.Web.Extensions
     {
         public static void AddDataBaseContext(this WebApplicationBuilder builder)
         {
+            ///builder.Services.AddEntityFrameworkProxies();    <-- This is why I spended three day more then expected. In EF7 this service was simplified for LazyLoading.
+
             builder.Services.AddDbContextPool<AsposeContext>((serviceProvider, options) =>
             {
                 var configProvider = serviceProvider.GetService<IConfigProvider>();
                 var connectionString = configProvider.GetDbConnectionString();
 
                 options
-                    //.UseInternalServiceProvider(serviceProvider)
+                    //.UseInternalServiceProvider(serviceProvider)  <-- This also took few days of my time. In a result, I was forced to retreat.
                     .UseSqlServer(connectionString)
                     .UseLazyLoadingProxies();
             });
@@ -26,6 +28,7 @@ namespace AsposeTestTask.Web.Extensions
         {
             builder.Services.AddTransient<ICompanyService, CompanyService>();
             builder.Services.AddTransient<IPersonService, PersonService>();
+            ///I didn't add the CancellationToken coz I was running out of time. But all services accept it, so CancellationToken can be added at any time.
         }
     }
 }

@@ -17,10 +17,6 @@
 </p>
 
 <div>
-    @Html.ActionLink("Back to Company List", "CompanyList")
-</div>
-
-<div>
     <form method="get" action="@Url.Action("CalculateCompanyPayment", "Company")">
         <input type="hidden" name="id" value="@Model.CompanyId" />
         <label for="paymentDate">Payment Date:</label>
@@ -28,4 +24,8 @@
         <input type="submit" value="Calculate">
     </form>
 
+</div>
+
+<div>
+    @Html.ActionLink("Back to Company List", "CompanyList")
 </div>
