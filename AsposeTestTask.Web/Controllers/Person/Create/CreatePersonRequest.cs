@@ -1,5 +1,6 @@
 ﻿using AsposeTestTask.Constants;
 using AsposeTestTask.DTO.Company.Responses;
+using AsposeTestTask.DTO.Person;
 using AsposeTestTask.DTO.Person.Requests;
 using System.ComponentModel.DataAnnotations;
 
@@ -25,7 +26,7 @@ namespace AsposeTestTask.Web.Controllers.Person.Create
         [Required(ErrorMessage = "Company Id is required")]
         public int CompanyId { get; set; }
 
-        public List<ReadCompanyResponseDTO> Companies { get; set; }
+        public IEnumerable<ReadCompanyResponseDTO> Companies { get; set; }
 
 
         public CreatePersonRequestDTO GetDTO() => new()

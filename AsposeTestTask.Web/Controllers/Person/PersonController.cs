@@ -1,5 +1,6 @@
 ﻿using AsposeTestTask.BLL.Interfaces;
 using AsposeTestTask.Constants;
+using AsposeTestTask.Entities;
 using AsposeTestTask.Web.Controllers.Person.Create;
 using AsposeTestTask.Web.Controllers.Person.Query;
 using AsposeTestTask.Web.Controllers.Person.Update;
@@ -139,6 +140,7 @@ namespace AsposeTestTask.Web.Controllers.Person
         public async Task<IActionResult> EditPerson(int personId)
         {
             var result = await _personService.ReadPerson(personId, CancellationToken.None);
+            var bosses = await _personService.ReadPotentialBosses(personId, CancellationToken.None);
             var companies = await _companyService.ReadCompaniesAsync(CancellationToken.None);
             var model = new UpdatePersonRequest
             {
@@ -149,7 +151,8 @@ namespace AsposeTestTask.Web.Controllers.Person
                 Role = Enum.Parse<CompanyRole>(result.Role),
                 BossId = result.Boss?.PersonId,
                 CompanyId = result.Company.CompanyId,
-                Companies = companies
+                Bosses = bosses,
+                Companies = companies,
             };
             return View(model);
         }
@@ -163,17 +166,8 @@ namespace AsposeTestTask.Web.Controllers.Person
         [HttpPost]
         public async Task<IActionResult> UpdatePerson(UpdatePersonRequest request)
         {
-            if (ModelState.IsValid)
-            {
-                var result = await _personService.UpdatePerson(request.GetDTO(), CancellationToken.None);
-                return View(result);
-            }
-            else
-            {
-                var companies = await _companyService.ReadCompaniesAsync(CancellationToken.None);
-                request.Companies = companies;
-                return View("EditPerson", request);
-            }
+            var result = await _personService.UpdatePerson(request.GetDTO(), CancellationToken.None);
+            return RedirectToAction("PersonList");
         }
 
 

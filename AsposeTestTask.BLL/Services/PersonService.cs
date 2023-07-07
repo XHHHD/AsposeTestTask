@@ -1,6 +1,6 @@
 ﻿using AsposeTestTask.BLL.Interfaces;
+using AsposeTestTask.BLL.Services;
 using AsposeTestTask.Constants;
-using AsposeTestTask.DAL.Constants.Specifications;
 using AsposeTestTask.DAL.Data;
 using AsposeTestTask.DTO.Company;
 using AsposeTestTask.DTO.Person;
@@ -14,7 +14,7 @@ namespace AsposeTestTask.Services
 {
     public class PersonService : IPersonService
     {
-        private AsposeContext _context;
+        private readonly AsposeContext _context;
 
 
         public PersonService(AsposeContext context)
@@ -104,7 +104,7 @@ namespace AsposeTestTask.Services
         /// Read data of all employees of current company.
         /// </summary>
         /// <returns>Data of employees of current company.</returns>
-        public async Task<List<ReadPersonResponseDTO>> ReadCompanyPersons(int personId, CancellationToken cancellationToken)
+        public async Task<IEnumerable<ReadPersonResponseDTO>> ReadCompanyPersons(int personId, CancellationToken cancellationToken)
         {
             #region DB REQUESTS
             var company =
@@ -125,13 +125,35 @@ namespace AsposeTestTask.Services
                     CompanyId = m.Company.CompanyId,
                     CompanyName = m.Company.CompanyName,
                 },
-            }).ToList();
+            });
 
             return result;
         }
 
 
-        public async Task<List<ReadPersonResponseDTO>> ReadAllPersons(CancellationToken cancellationToken)
+        public async Task<IEnumerable<PersonShortModelDTO>> ReadPotentialBosses(int personId, CancellationToken cancellationToken)
+        {
+            #region DB REQUESTS
+            var company =
+                await _context.Companies
+                .Include(c => c.Members)
+                .FirstOrDefaultAsync(c => c.CompanyId == personId, cancellationToken)
+                ?? throw new Exception("Company wasn't found!");
+            #endregion
+
+            var result = company.Members
+                .Where(m => m.Role != CompanyRole.Employee)
+                .Select(m => new PersonShortModelDTO()
+                {
+                    PersonId = m.PersonId,
+                    PersonName = m.PersonName,
+                }).ToList();
+
+            return result;
+        }
+
+
+        public async Task<IEnumerable<ReadPersonResponseDTO>> ReadAllPersons(CancellationToken cancellationToken)
         {
             #region DB REQUESTS
             var persons =
@@ -175,11 +197,10 @@ namespace AsposeTestTask.Services
                 ?? throw new Exception("Person wasn't found!");
             #endregion
 
+            var members = person.Company.Members.ToHashSet();
+            var salaryService = new SalaryService(members, request.PaymentDate);
 
-            var members = person.Company.Members.ToList();
-            int yearsOfExperience = request.PaymentDate.Year - person.DateOfHire.Year;
-            var additionalInterest = SpecificationService.GetMemberAdditionalInterest(person.PersonId, yearsOfExperience, members);
-            double salary = person.Salary + person.Salary * additionalInterest;
+            var salary = salaryService.GetSalary(person.PersonId);
 
             return salary;
         }

@@ -1,5 +1,4 @@
 ﻿using AsposeTestTask.BLL.Interfaces;
-using AsposeTestTask.DAL.Constants.Specifications;
 using AsposeTestTask.DAL.Data;
 using AsposeTestTask.DTO.Company.Requests;
 using AsposeTestTask.DTO.Company.Responses;
@@ -64,6 +63,7 @@ namespace AsposeTestTask.BLL.Services
             var company =
                 await _context.Companies.FirstOrDefaultAsync(c => c.CompanyId == companyId, cancellationToken)
                 ?? throw new Exception("Company wasn't found!");
+            var parentCompany = await _context.Companies.FirstOrDefaultAsync(c => c.CompanyId == company.ParentCompanyId, cancellationToken);
             #endregion
 
 
@@ -72,6 +72,7 @@ namespace AsposeTestTask.BLL.Services
                 CompanyId = company.CompanyId,
                 CompanyName = company.CompanyName,
                 ParentCompanyId = company.ParentCompanyId,
+                ParentCompanyName = parentCompany?.CompanyName ?? "",
                 Members = company.Members.Select(p => new PersonShortModelDTO()
                 {
                     PersonId = p.PersonId,
@@ -89,7 +90,7 @@ namespace AsposeTestTask.BLL.Services
         /// Get info about all registered companies.
         /// </summary>
         /// <returns>List of registered companies data.</returns>
-        public async Task<List<ReadCompanyResponseDTO>> ReadCompaniesAsync(CancellationToken cancellationToken)
+        public async Task<IEnumerable<ReadCompanyResponseDTO>> ReadCompaniesAsync(CancellationToken cancellationToken)
         {
             #region DB REQUESTS
             var companies =
@@ -132,12 +133,11 @@ namespace AsposeTestTask.BLL.Services
             #endregion
 
             double result = 0;
-            var members = company.Members.ToList();
+            var members = company.Members.ToHashSet();
+            var salaryService = new SalaryService(members, request.PaymentDate);
             foreach (var member in members)
             {
-                int yearsOfExperience = request.PaymentDate.Year - member.DateOfHire.Year;
-                var additionalInterest = SpecificationService.GetMemberAdditionalInterest(member.PersonId, yearsOfExperience, members);
-                result += member.Salary + member.Salary * additionalInterest;
+                result += salaryService.GetSalary(member.PersonId);
             }
 
             return result;

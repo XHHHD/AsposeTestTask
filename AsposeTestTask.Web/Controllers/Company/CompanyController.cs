@@ -47,6 +47,7 @@ namespace AsposeTestTask.Web.Controllers.Company
         public async Task<IActionResult> ReadCompany(int id, bool isEdit = false)
         {
             var result = await _companyService.ReadCompanyAsync(id, CancellationToken.None);
+            var companies = await _companyService.ReadCompaniesAsync(CancellationToken.None);
 
             if (isEdit)
             {
@@ -54,7 +55,9 @@ namespace AsposeTestTask.Web.Controllers.Company
                 {
                     CompanyId = result.CompanyId,
                     CompanyName = result.CompanyName,
-                    ParentCompanyId = result.ParentCompanyId
+                    ParentCompanyId = result.ParentCompanyId,
+                    ParentCompanyName = result.ParentCompanyName,
+                    Companies = companies,
                 };
                 return View("EditCompany", model);
             }

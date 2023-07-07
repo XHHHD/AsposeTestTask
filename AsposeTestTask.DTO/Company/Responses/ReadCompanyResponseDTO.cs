@@ -6,6 +6,7 @@ namespace AsposeTestTask.DTO.Company.Responses
     {
         public int CompanyId { get; set; }
         public int? ParentCompanyId { get; set; }
+        public string? ParentCompanyName { get; set; }
         public string CompanyName { get; set; }
         public List<PersonShortModelDTO> Members { get; set; }
     }

@@ -40,12 +40,6 @@
             </div>
 
             <div class="form-group">
-                <label asp-for="BossId">Boss Id:</label>
-                <input asp-for="BossId" class="form-control" type="number" name="BossId" />
-                <span asp-validation-for="BossId" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
                 <label asp-for="CompanyId">Company:</label>
                 <select asp-for="CompanyId" class="form-control" name="CompanyId">
                     @foreach (var company in Model.Companies)
