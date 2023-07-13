@@ -137,7 +137,7 @@ namespace AsposeTestTask.BLL.Services
             var salaryService = new SalaryService(members, request.PaymentDate);
             foreach (var member in members)
             {
-                result += salaryService.GetSalary(member.PersonId);
+                result += salaryService.CalculateSalary(member.PersonId);
             }
 
             return result;

@@ -200,7 +200,7 @@ namespace AsposeTestTask.Services
             var members = person.Company.Members.ToHashSet();
             var salaryService = new SalaryService(members, request.PaymentDate);
 
-            var salary = salaryService.GetSalary(person.PersonId);
+            var salary = salaryService.CalculateSalary(person.PersonId);
 
             return salary;
         }
