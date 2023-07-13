@@ -104,11 +104,11 @@ namespace AsposeTestTask.Services
         /// Read data of all employees of current company.
         /// </summary>
         /// <returns>Data of employees of current company.</returns>
-        public async Task<IEnumerable<ReadPersonResponseDTO>> ReadCompanyPersons(int personId, CancellationToken cancellationToken)
+        public async Task<IEnumerable<ReadPersonResponseDTO>> ReadCompanyPersons(int companyId, CancellationToken cancellationToken)
         {
             #region DB REQUESTS
             var company =
-                await _context.Companies.FirstOrDefaultAsync(c => c.CompanyId == personId, cancellationToken)
+                await _context.Companies.FirstOrDefaultAsync(c => c.CompanyId == companyId, cancellationToken)
                 ?? throw new Exception("Company wasn't found!");
             #endregion
 
@@ -137,7 +137,7 @@ namespace AsposeTestTask.Services
             var company =
                 await _context.Companies
                 .Include(c => c.Members)
-                .FirstOrDefaultAsync(c => c.CompanyId == personId, cancellationToken)
+                .FirstOrDefaultAsync(c => c.Members.Select(m => m.PersonId).Contains(personId), cancellationToken)
                 ?? throw new Exception("Company wasn't found!");
             #endregion
 
@@ -175,7 +175,7 @@ namespace AsposeTestTask.Services
                     CompanyId = m.Company.CompanyId,
                     CompanyName = m.Company.CompanyName,
                 },
-            }).ToList();
+            }).OrderBy(p => p.PersonName).ToList();
 
             return result;
         }

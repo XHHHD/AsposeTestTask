@@ -1,4 +1,6 @@
-﻿@model AsposeTestTask.Web.Controllers.Person.Update.UpdatePersonRequest
+﻿@using AsposeTestTask.BLL.Services;
+@using AsposeTestTask.Constants;
+@model AsposeTestTask.Web.Controllers.Person.Update.UpdatePersonRequest
 
 @{
     ViewData["Title"] = "EditPerson";
@@ -34,7 +36,7 @@
         <div class="form-group">
             <label class="control-label col-md-2">Date of Hire</label>
             <div class="col-md-10">
-                @Html.EditorFor(model => model.DateOfHire, new { htmlAttributes = new { @class = "form-control", type = "date" } })
+                @Html.EditorFor(model => model.DateOfHire, "{0:yyyy-MM-dd}", new { htmlAttributes = new { @class = "form-control", type = "date" } })
                 @Html.ValidationMessageFor(model => model.DateOfHire, "", new { @class = "text-danger" })
             </div>
         </div>
@@ -42,7 +44,7 @@
         <div class="form-group">
             <label class="control-label col-md-2">Role</label>
             <div class="col-md-10">
-                @Html.EditorFor(model => model.Role, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.DropDownListFor(model => model.Role, EnumHelper.GetSelectListFor(typeof(CompanyRole)), "-- Select Role --", new { @class = "form-control" })
                 @Html.ValidationMessageFor(model => model.Role, "", new { @class = "text-danger" })
             </div>
         </div>

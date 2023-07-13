@@ -100,6 +100,7 @@ namespace AsposeTestTask.BLL.Services
 
 
             var result = new List<ReadCompanyResponseDTO>();
+
             foreach (var company in companies)
             {
                 result.Add(new ReadCompanyResponseDTO()
@@ -114,6 +115,8 @@ namespace AsposeTestTask.BLL.Services
                     }).ToList(),
                 });
             }
+
+            result = result.OrderBy(c => c.CompanyId).ToList();
 
 
             return result;
